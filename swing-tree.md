@@ -20,11 +20,14 @@ Swing-Tree is a declarative UI DSL for Swing that lets developers describe deskt
 import swingtree.UI;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+import java.awt.Dimension;
 
 public class HelloSwingTree {
     public static void main(String[] args) {
         UI.show(frame -> {
+            frame.setTitle("SwingTree Example");
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            frame.setPreferredSize(new Dimension(320, 160));
             return UI.panel("wrap 1, insets 12")
                 .add(UI.label("Hello, SwingTree!"))
                 .add(UI.textField("Jane Doe"))
