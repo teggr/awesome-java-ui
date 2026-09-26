@@ -1,6 +1,6 @@
 ---
 name: Swing-Tree
-status: Production-ready, Very Active
+status: Production-ready
 javaVersion: 8+
 learningCurve: Easy-Moderate
 lastRelease: 1.0.0 (2026-09-18)
@@ -25,10 +25,10 @@ public class HelloSwingTree {
         JPanel panel = new JPanel();
 
         UI.of(panel).withLayout("wrap 1, insets 12")
-            .add(UI.label("Hello, SwingTree!"))
+            .add(UI.label("Hello, Swing-Tree!"))
             .add(UI.textField("Jane Doe"))
             .add(UI.button("Say Hi")
-                .onClick(it -> System.out.println("Welcome to SwingTree!")));
+                .onClick(it -> System.out.println("Welcome to Swing-Tree!")));
 
         return panel;
     }
