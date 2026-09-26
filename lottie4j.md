@@ -2,7 +2,7 @@
 name: Lottie4J
 status: Active
 javaVersion: 21+
-learningCurve: Easy-Moderate
+learningCurve: Moderate
 lastRelease: v1.2.5 (July 2026)
 learnMoreText: Lottie4J Website
 learnMoreHref: https://lottie4j.com/
@@ -10,7 +10,6 @@ image: images/ui-lottie4j.png
 tags:
     - Desktop UI
     - UI Components
-dateAdded: 2026-09-26
 ---
 
 Lottie4J is a Java library for working with Lottie animations natively, with a strong focus on JavaFX desktop applications. It parses Lottie JSON files into typed Java objects and can also write valid Lottie files back to disk, making it useful for both playback and tooling workflows. Its `fxplayer` module renders animations directly on a JavaFX `Canvas`, so teams can avoid embedding a browser engine or JavaScript bridge just to show motion assets.
