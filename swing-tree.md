@@ -2,37 +2,35 @@
 name: Swing-Tree
 status: Production-ready
 javaVersion: 8+
-learningCurve: Easy
-lastRelease: v0.13.0
+learningCurve: Easy-Moderate
+lastRelease: 1.0.0 (2026-09-18)
 learnMoreText: Swing-Tree GitHub
-learnMoreHref: https://github.com/globaltcad/swing-tree
+learnMoreHref: https://github.com/globaltcad/swing-tree/tree/main
 image: images/ui-swing-tree.png
 tags:
     - Desktop UI
 dateAdded: 2026-02-09
 ---
 
-Swing-Tree brings declarative, fluent APIs to Swing development—think Jetpack Compose or SwiftUI, but for Swing. Developed by Global TCAD Solutions for their own desktop applications, it eliminates Swing's verbose boilerplate with a clean, lambda-friendly API. The entire framework centers around a single `UI` class that can be statically imported, making Swing development feel modern and expressive. It integrates seamlessly with existing Swing components and works beautifully alongside FlatLaf for modern aesthetics. This is a community-driven library that's well-suited for developers seeking a more contemporary Swing development experience.
+Swing-Tree is a declarative UI DSL for Swing that lets developers describe desktop interfaces as a fluent component tree instead of wiring together verbose imperative code. The library builds directly on standard Swing, uses MigLayout for expressive layout declarations, and keeps most of its API on a single `UI` class, which makes small views and larger forms read naturally. Beyond basic component builders, Swing-Tree also includes styling, animation, event hooks, and support for property-driven MVVM-style patterns through the wider Global TCAD ecosystem. The project is actively maintained and now has a stable 1.0 release, making it a practical option for teams that want to modernize Swing development without replacing their existing desktop stack. It is best suited for Java desktop applications that still rely on Swing but want a more concise, composable authoring model.
 
 ## Code Example
 
 ```java
-import static swingtree.UI.*;
+import javax.swing.JPanel;
+import swingtree.UI;
 
 public class HelloSwingTree {
-    public static void main(String[] args) {
-        of(new JFrame("Swing-Tree Example"))
-            .withDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
-            .withSize(300, 200)
-            .withLayout("fill, insets 20")
-            .add("grow",
-                panel("fill, wrap 1")
-                .add("grow", label("Hello, Swing-Tree!"))
-                .add("grow", button("Click Me")
-                    .onClick(it -> System.out.println("Clicked!"))
-                )
-            )
-            .show();
+    public static JPanel createView() {
+        JPanel panel = new JPanel();
+
+        UI.of(panel).withLayout("wrap 1, insets 12")
+            .add(UI.label("Hello, Swing-Tree!"))
+            .add(UI.textField("Jane Doe"))
+            .add(UI.button("Say Hi")
+                .onClick(it -> System.out.println("Welcome to Swing-Tree!")));
+
+        return panel;
     }
 }
 ```
