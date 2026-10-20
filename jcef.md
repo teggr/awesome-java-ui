@@ -3,7 +3,8 @@ name: JCEF
 status: Production-ready
 javaVersion: Requires JetBrains Runtime
 learningCurve: Moderate-Complex
-lastRelease: Active
+lastRelease: 152.0.6 (September 2026)
+lastReleaseHref: https://github.com/jcefmaven/jcefmaven/releases
 learnMoreText: jcefmaven GitHub
 learnMoreHref: https://github.com/jcefmaven/jcefmaven
 image: images/ui-jcefmaven.png

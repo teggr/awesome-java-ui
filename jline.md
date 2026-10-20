@@ -3,7 +3,8 @@ name: JLine
 status: Production-ready, Very Active
 javaVersion: 11+ (JLine 4.x), 8+ (JLine 3.x)
 learningCurve: Easy-Moderate
-lastRelease: v4.0.0
+lastRelease: v4.4.8 (October 2026)
+lastReleaseHref: https://github.com/jline/jline3/releases
 learnMoreText: JLine GitHub
 learnMoreHref: https://github.com/jline/jline3
 image: images/ui-jline.png

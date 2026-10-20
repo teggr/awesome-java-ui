@@ -3,7 +3,8 @@ name: GemsFX
 status: Production-ready, Very Active
 javaVersion: 21+
 learningCurve: Easy-Moderate
-lastRelease: v3.10.1 (February 2026)
+lastRelease: v4.5.0 (September 2026)
+lastReleaseHref: https://github.com/dlsc-software-consulting-gmbh/GemsFX/releases
 learnMoreText: GemsFX on GitHub
 learnMoreHref: https://github.com/dlsc-software-consulting-gmbh/GemsFX
 image: images/ui-gemsfx.png

@@ -3,7 +3,8 @@ name: JavaPackager
 status: Production-ready, Active
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: v1.7.7 (2024)
+lastRelease: v2.0.0 (October 2026)
+lastReleaseHref: https://github.com/fvarrui/JavaPackager/releases
 learnMoreText: JavaPackager GitHub
 learnMoreHref: https://github.com/fvarrui/JavaPackager
 image: images/ui-javapackager.png

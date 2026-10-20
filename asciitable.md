@@ -3,7 +3,8 @@ name: AsciiTable
 status: Production-ready, Mature
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: v0.3.2
+lastRelease: v1.0.1
+lastReleaseHref: https://github.com/vdmeer/asciitable/tags
 learnMoreText: AsciiTable GitHub
 learnMoreHref: https://github.com/vdmeer/asciitable
 image: images/ui-asciitable.png

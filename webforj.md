@@ -3,7 +3,8 @@ name: webforJ
 status: Production-ready, Enterprise-focused
 javaVersion: 17+ (21+ recommended) 
 learningCurve: Easy
-lastRelease: v25.12 (2026)
+lastRelease: v26.02 (September 2026)
+lastReleaseHref: https://github.com/webforj/webforj/releases
 learnMoreText: webforJ Documentation
 learnMoreHref: https://docs.webforj.com/
 image: images/ui-webforj.png

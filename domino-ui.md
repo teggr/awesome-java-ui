@@ -3,7 +3,8 @@ name: Domino UI
 status: Active, Open Source
 javaVersion: 11+
 learningCurve: Moderate
-lastRelease: v2.0.0 (2024)
+lastRelease: v2.1.3
+lastReleaseHref: https://github.com/DominoKit/domino-ui/releases
 learnMoreText: Domino UI Website
 learnMoreHref: https://dominokit.com/home
 image: images/ui-domino-ui.png

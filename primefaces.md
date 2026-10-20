@@ -3,7 +3,8 @@ name: PrimeFaces
 status: Production-ready
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: Active
+lastRelease: v16.0.1 (October 2026)
+lastReleaseHref: https://github.com/primefaces/primefaces/releases
 learnMoreText: PrimeFaces Official Website
 learnMoreHref: https://primefaces.github.io/primefaces/
 image: images/ui-primefaces.png

@@ -3,7 +3,8 @@ name: VisUI
 status: Active, Community Maintained
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: v1.5.3 (2023)
+lastRelease: v1.5.9 (June 2026)
+lastReleaseHref: https://github.com/kotcrab/vis-ui/releases
 learnMoreText: VisUI GitHub
 learnMoreHref: https://github.com/kotcrab/vis-ui
 image: images/ui-visui.png
