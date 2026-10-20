@@ -3,7 +3,8 @@ name: Casciian
 status: Active Development
 javaVersion: 8+
 learningCurve: Moderate
-lastRelease: v1.0.0
+lastRelease: v1.6.0
+lastReleaseHref: https://github.com/crramirez/casciian/releases
 learnMoreText: Casciian GitHub
 learnMoreHref: https://github.com/crramirez/casciian
 image: images/ui-casciian.png

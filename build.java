@@ -171,6 +171,7 @@ private DomContent project(Map<String, List<String>> data, DomContent content) {
   String javaVersion = data.getOrDefault("javaVersion", List.of("Unknown Java Version")).get(0);
   String learningCurve = data.getOrDefault("learningCurve", List.of("Unknown Learning Curve")).get(0);
   String lastRelease = data.getOrDefault("lastRelease", List.of("Unknown Last Release")).get(0);
+  String lastReleaseHref = data.getOrDefault("lastReleaseHref", List.of()).stream().findFirst().orElse("");
   String learnMoreText = data.getOrDefault("learnMoreText", List.of("Learn More")).get(0);
   String learnMoreHref = data.getOrDefault("learnMoreHref", List.of("#")).get(0);
   String image = data.getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
@@ -193,7 +194,15 @@ private DomContent project(Map<String, List<String>> data, DomContent content) {
       p("Status: " + status),
       p("Java Version: " + javaVersion),
       p("Learning Curve: " + learningCurve),
-      p("Last Release: " + lastRelease),
+      p(
+        text("Last Release: "),
+        lastReleaseHref.isBlank()
+          ? text(lastRelease)
+          : a(lastRelease)
+              .withHref(lastReleaseHref)
+              .withTarget("_blank")
+              .attr("rel", "noopener noreferrer")
+      ),
       a(
         text(learnMoreText),
         i().withClass("bi bi-box-arrow-up-right")

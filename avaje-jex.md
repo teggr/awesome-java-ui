@@ -3,7 +3,8 @@ name: Avaje Jex
 status: Production-ready, Active
 javaVersion: 11+
 learningCurve: Easy
-lastRelease: v2.5 (2025)
+lastRelease: v3.6
+lastReleaseHref: https://github.com/avaje/avaje-jex/releases
 learnMoreText: Avaje Jex GitHub
 learnMoreHref: https://github.com/avaje/avaje-jex
 image: images/ui-avaje-jex.png

@@ -23,6 +23,7 @@ status: Production-ready              # Production status (Production-ready, Act
 javaVersion: 11+                      # Java version support (e.g., "8+", "11+", "17+ recommended")
 learningCurve: Moderate               # Difficulty (Easy, Easy-Moderate, Moderate, Moderate-Steep, Steep)
 lastRelease: v1.2.3 (January 2026)   # Latest version with date or "Active"/"Ongoing"
+lastReleaseHref: https://github.com/owner/repository/releases # Verified GitHub releases/tags or Maven artifact source
 learnMoreText: Official Website       # Link text for documentation
 learnMoreHref: https://example.com/   # URL to official docs
 image: images/ui-libraryname.png      # Image path - MUST use relative path (images/ui-*.png), NOT absolute (/images/)
@@ -31,6 +32,8 @@ tags:                                 # Array of category tags
     - Web UI
 ---
 ```
+
+When `lastRelease` is a specific version, include `lastReleaseHref` only when the GitHub releases/tags page or Maven repository page has been verified as the source. Do not infer or guess this URL.
 
 ### Description Section
 

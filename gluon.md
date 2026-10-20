@@ -3,7 +3,8 @@ name: Gluon
 status: Production-ready, Commercial & Open Source
 javaVersion: 17+ (21+ recommended)
 learningCurve: Moderate
-lastRelease: Scene Builder 25.0.0 (September 2025)
+lastRelease: Scene Builder 26.0.0 (April 2026)
+lastReleaseHref: https://github.com/gluonhq/scenebuilder/releases
 learnMoreText: Gluon Official Website
 learnMoreHref: https://gluonhq.com/
 image: images/ui-gluonhq.png

@@ -3,7 +3,8 @@ name: Thymeleaf
 status: Production-ready
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: Active
+lastRelease: 3.1.5.RELEASE (April 2026)
+lastReleaseHref: https://github.com/thymeleaf/thymeleaf/releases
 learnMoreText: Thymeleaf Official Website
 learnMoreHref: https://www.thymeleaf.org/
 image: images/ui-thymeleaf.png

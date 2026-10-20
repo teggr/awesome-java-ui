@@ -3,7 +3,8 @@ name: CezveRender
 status: Experimental
 javaVersion: 17+
 learningCurve: Steep
-lastRelease: Active (2025)
+lastRelease: v1.1
+lastReleaseHref: https://github.com/BoraYalcinn/CezveRender/tags
 learnMoreText: CezveRender GitHub
 learnMoreHref: https://github.com/BoraYalcinn/CezveRender
 image: images/ui-cezverender.png

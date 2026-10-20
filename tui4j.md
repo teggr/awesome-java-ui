@@ -3,7 +3,8 @@ name: tui4j
 status: Archived, No Longer Maintained
 javaVersion: 8+
 learningCurve: Easy
-lastRelease: Last activity 2020
+lastRelease: v0.3.3 (February 2026)
+lastReleaseHref: https://github.com/WilliamAGH/tui4j/releases
 learnMoreText: tui4j GitHub
 learnMoreHref: https://github.com/WilliamAGH/tui4j
 image: images/ui-tui4j.png

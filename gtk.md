@@ -3,7 +3,8 @@ name: java-gtk
 status: Experimental, Early Development
 javaVersion: 11+
 learningCurve: Moderate-Steep
-lastRelease: Early development (2024)
+lastRelease: v0.6.1 (July 2025)
+lastReleaseHref: https://github.com/bailuk/java-gtk/releases
 learnMoreText: java-gtk GitHub
 learnMoreHref: https://github.com/bailuk/java-gtk
 image: images/ui-gtk.png

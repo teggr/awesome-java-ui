@@ -3,7 +3,8 @@ name: HTMX + Spring Boot
 status: Modern, Very Active
 javaVersion: 11+ (Spring Boot 2.x+), 17+ (Spring Boot 3.x+)
 learningCurve: Easy
-lastRelease: htmx-spring-boot v3.x+
+lastRelease: v6.0.1
+lastReleaseHref: https://github.com/wimdeblauwe/htmx-spring-boot/releases
 learnMoreText: htmx-spring-boot GitHub
 learnMoreHref: https://github.com/wimdeblauwe/htmx-spring-boot
 image: images/ui-htmx.png

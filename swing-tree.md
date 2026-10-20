@@ -3,7 +3,8 @@ name: Swing-Tree
 status: Production-ready
 javaVersion: 8+
 learningCurve: Easy-Moderate
-lastRelease: 1.0.0 (2026-09-18)
+lastRelease: 1.1.1 (October 2026)
+lastReleaseHref: https://github.com/globaltcad/swing-tree/releases
 learnMoreText: Swing-Tree GitHub
 learnMoreHref: https://github.com/globaltcad/swing-tree/tree/main
 image: images/ui-swing-tree.png

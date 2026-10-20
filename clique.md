@@ -3,7 +3,8 @@ name: Clique
 status: Production-ready, Very Active
 javaVersion: 21+
 learningCurve: Easy
-lastRelease: v3.0.0
+lastRelease: v4.0.3
+lastReleaseHref: https://github.com/kusoroadeolu/Clique/releases
 learnMoreText: Clique GitHub
 learnMoreHref: https://github.com/kusoroadeolu/Clique
 image: images/ui-clique.png

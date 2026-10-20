@@ -3,7 +3,8 @@ name: LibGDX
 status: Production-ready, Active
 javaVersion: 8-21 (varies by platform, see notes)
 learningCurve: Moderate
-lastRelease: v1.14.0 (October 2025)
+lastRelease: v1.14.2 (June 2026)
+lastReleaseHref: https://github.com/libgdx/libgdx/releases
 learnMoreText: LibGDX Official Website
 learnMoreHref: https://libgdx.com/
 image: images/ui-libgdx.png
