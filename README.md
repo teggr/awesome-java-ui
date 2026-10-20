@@ -110,3 +110,9 @@ public class Example {
 - `tags`: Categories (Desktop UI, Web Framework, Terminal UI, etc.)
 
 All contributions are appreciated! 🎉
+
+### Automated candidate discovery
+
+The **Discover Java UI candidates** GitHub Agentic Workflow runs weekly on Monday around 13:00 UTC and can also be started manually from the Actions tab. Its Java 25/JBang collector searches GitHub and Maven Central; the agent checks likely matches and creates a new dated issue with the `candidate-discovery` label only when it finds plausible candidates. Each issue title includes the workflow run number.
+
+These are unverified leads, not automatic additions. Please check that a candidate is a Java UI library or framework and is not already listed before opening a contribution. Reddit is not currently used as a source.
