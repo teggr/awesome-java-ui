@@ -35,6 +35,10 @@ cd _site
 
 The site will be available at `http://localhost:8000`
 
+### Scheduled release audit
+
+The `audit-project-releases` GitHub Agentic Workflow runs weekly on Mondays and can also be started manually from the Actions tab. It compares each project's `lastRelease` value with the verified upstream source in `lastReleaseHref` (GitHub Releases/Tags or Maven Central), then opens a pull request only when it confirms a newer stable version. Entries without a supported source link are skipped. To compile or validate the workflow locally, install the [GitHub Agentic Workflows CLI](https://github.github.com/gh-aw/) and run `gh aw compile`.
+
 **About Thumbnails:**
 The site uses automatically generated thumbnails for faster page loading. When you add a new image to the `images/` directory:
 1. Run `jbang GenerateThumbnails.java` to generate thumbnails
@@ -70,6 +74,7 @@ status: Production-ready / Active / Archived / Beta
 javaVersion: Java 17+
 learningCurve: Easy / Moderate / Steep
 lastRelease: vX.X.X (YYYY)
+lastReleaseHref: https://github.com/example/project/releases
 learnMoreText: Official Website
 learnMoreHref: https://example.com
 image: images/ui-framework-name.png
@@ -99,6 +104,7 @@ public class Example {
 - `javaVersion`: Supported Java versions
 - `learningCurve`: Difficulty level
 - `lastRelease`: Latest version and year
+- `lastReleaseHref`: Optional link to the verified GitHub releases/tags page or Maven repository used as the release source
 - `learnMoreText` / `learnMoreHref`: Link to documentation
 - `image`: Screenshot/logo filename
 - `tags`: Categories (Desktop UI, Web Framework, Terminal UI, etc.)

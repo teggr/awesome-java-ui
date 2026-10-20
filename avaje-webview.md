@@ -3,7 +3,8 @@ name: Avaje WebView
 status: Experimental, Early Development
 javaVersion: 11+
 learningCurve: Easy
-lastRelease: Early development
+lastRelease: v0.15
+lastReleaseHref: https://github.com/avaje/avaje-webview/releases
 learnMoreText: Avaje WebView GitHub
 learnMoreHref: https://github.com/avaje/avaje-webview
 image: images/ui-avaje-webview.png

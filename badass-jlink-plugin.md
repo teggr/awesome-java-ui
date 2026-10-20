@@ -3,7 +3,8 @@ name: Badass JLink Plugin
 status: Production-ready, Active
 javaVersion: 11+
 learningCurve: Moderate
-lastRelease: v3.1.0 (2024)
+lastRelease: v4.1.1
+lastReleaseHref: https://github.com/beryx/badass-jlink-plugin/releases
 learnMoreText: Badass JLink Plugin Documentation
 learnMoreHref: https://badass-jlink-plugin.beryx.org/releases/latest/
 image: images/ui-badass-jlink-plugin.png

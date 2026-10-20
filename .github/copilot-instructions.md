@@ -39,6 +39,7 @@ The front matter schema:
 - `javaVersion`: Supported Java versions
 - `learningCurve`: Difficulty level (e.g., "Low", "Moderate", "Steep")
 - `lastRelease`: Release information
+- `lastReleaseHref`: Optional link to the verified GitHub releases/tags page or Maven repository used as the release source; do not guess the URL
 - `learnMoreText` / `learnMoreHref`: Link to official documentation
 - `image`: URL to logo/screenshot
 - `tags`: Array of categories (e.g., "Desktop UI", "Web Framework", "Terminal UI")

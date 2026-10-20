@@ -3,7 +3,8 @@ name: NetBeans Platform
 status: Production-ready, Mature
 javaVersion: 8+
 learningCurve: Steep
-lastRelease: Active
+lastRelease: Apache NetBeans 31 (August 2026)
+lastReleaseHref: https://github.com/apache/netbeans/releases
 learnMoreText: NetBeans Platform Official Website
 learnMoreHref: https://netbeans.apache.org/
 image: images/ui-netbeans.png

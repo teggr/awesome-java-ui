@@ -3,7 +3,8 @@ name: Javalin
 status: Production-ready, Active
 javaVersion: 17+
 learningCurve: Easy
-lastRelease: v7.0.0 (2026)
+lastRelease: v7.2.3 (August 2026)
+lastReleaseHref: https://github.com/javalin/javalin/releases
 learnMoreText: Javalin Official Website
 learnMoreHref: https://javalin.io/
 image: images/ui-javalin.png

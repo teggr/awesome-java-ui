@@ -3,7 +3,8 @@ name: Maven Tailwind Plugin
 status: Active, Community Project
 javaVersion: 11+
 learningCurve: Easy
-lastRelease: v1.1.0 (2024)
+lastRelease: v1.2.0 (July 2026)
+lastReleaseHref: https://github.com/4ndreiDev/maven-tailwind-plugin/releases
 learnMoreText: Maven Tailwind Plugin GitHub
 learnMoreHref: https://github.com/4ndreiDev/maven-tailwind-plugin
 image: images/ui-maven-tailwind-plugin.png

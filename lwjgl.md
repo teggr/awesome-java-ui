@@ -3,7 +3,8 @@ name: LWJGL
 status: Production-ready, Active
 javaVersion: 8+
 learningCurve: Steep
-lastRelease: v3.4.1 (February 2026)
+lastRelease: v3.4.3 (August 2026)
+lastReleaseHref: https://github.com/LWJGL/lwjgl3/releases
 learnMoreText: LWJGL Official Website
 learnMoreHref: https://www.lwjgl.org/
 image: images/ui-lwjgl.png
