@@ -187,9 +187,9 @@ private DomContent project(Map<String, List<String>> data, DomContent content) {
 //        .attr("hx-swap", "innerHTML transition:true show:window:top")
 //        .attr("hx-push-url", "true")
         .withClass("back-link")
-    ),
+    ).attr("data-pagefind-ignore", ""),
     each(
-      h1(name),
+      h1(name).attr("data-pagefind-meta", "title"),
       img().withSrc(image).withAlt(name),
       p("Status: " + status),
       p("Java Version: " + javaVersion),
@@ -222,7 +222,7 @@ private DomContent project(Map<String, List<String>> data, DomContent content) {
       ).withClass("tags"),
       content
     )
-  ).withId("main-content");
+  ).withId("main-content").attr("data-pagefind-body", "");
 
 }
 
@@ -493,6 +493,23 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
         p("This is a community-driven resource, built by Java developers for Java developers. Whether you're discovering a new framework, sharing your expertise, or helping others navigate the Java UI landscape - your contributions make this guide better for everyone. Join us in building the most comprehensive resource for Java UI development!")
       ).withClass("hero-right")
     ).withClass("hero-section"),
+    section(
+      h2("Search projects").withId("search-heading"),
+      p("Search names, descriptions, metadata and code examples. No matches? Try fewer words or clear the query."),
+      rawHtml("""
+        <pagefind-input placeholder="Search Java UI frameworks…"></pagefind-input>
+        <pagefind-summary></pagefind-summary>
+        <pagefind-results hide-sub-results>
+          <script type="text/pagefind-template">
+            <li class="pf-result">
+              <h3 class="pf-result-title"><a class="pf-result-link" href="{{ url | safeUrl }}">{{ meta.title }}</a></h3>
+              <p class="pf-result-excerpt">{{+ excerpt +}}</p>
+            </li>
+          </script>
+        </pagefind-results>
+        """),
+      noscript("Search requires JavaScript. You can still browse all projects and tags below.")
+    ).withClass("catalogue-search").attr("aria-labelledby", "search-heading"),
     // Sort controls section - above the project grid
     div(
       div(
@@ -681,6 +698,8 @@ static HtmlTag output(DomContent content, SeoMetadata seo) {
       link().withRel("preconnect").withHref("https://fonts.gstatic.com").attr("crossorigin", ""),
       link().withRel("stylesheet").withHref("https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&display=swap"),
       link().withRel("stylesheet").withHref("css/styles.css"),
+      link().withRel("stylesheet").withHref("pagefind/pagefind-component-ui.css"),
+      script().withType("module").withSrc("pagefind/pagefind-component-ui.js"),
       link().withRel("stylesheet").withHref("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"),
       script().withSrc("https://unpkg.com/htmx.org@2.0.4"),
       rawHtml("<!-- 100% privacy-first analytics -->"),

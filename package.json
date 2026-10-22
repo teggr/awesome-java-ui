@@ -1,0 +1,16 @@
+{
+  "name": "awesome-java-ui",
+  "private": true,
+  "scripts": {
+    "build": "jbang run build.java && pagefind --site _site",
+    "search:index": "pagefind --site _site",
+    "preview": "pagefind --site _site --serve",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "pagefind": "1.5.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
