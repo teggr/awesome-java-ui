@@ -51,12 +51,14 @@ void main(String... args) throws IOException {
         document.accept(frontMatterVisitor);
 
         String html = renderer.render(document);
+        Map<String, List<String>> projectData = new HashMap<>(frontMatterVisitor.getData());
+        projectData.put("_description", List.of(extractDescription(html)));
         // Fix formatting: add newline after opening code tag for proper indentation
         html = html.replaceAll("(<code[^>]*>)([^ \\n])", "$1\n$2");
 
         // Write HTML to docs directory
-        HtmlTag htmlTag = output(project(frontMatterVisitor.getData(), rawHtml(html)),
-          SeoMetadata.forProject(frontMatterVisitor.getData(), path.getFileName().toString().replace(".md", ".html")));
+        HtmlTag htmlTag = output(project(projectData, rawHtml(html)),
+          SeoMetadata.forProject(projectData, path.getFileName().toString().replace(".md", ".html")));
 
         StringWriter writer = new StringWriter();
         writer.append(htmlTag.render(IndentedHtml.inMemory()));
@@ -65,7 +67,7 @@ void main(String... args) throws IOException {
 
         String htmlFileName = path.getFileName().toString().replace(".md", ".html");
 
-        markdownData.put( htmlFileName, frontMatterVisitor.getData() );
+        markdownData.put(htmlFileName, projectData);
 
         Path htmlPath = outputDirectory.resolve(htmlFileName);
         Files.writeString(htmlPath, finalHtml);
@@ -165,66 +167,89 @@ void main(String... args) throws IOException {
 }
 
 private DomContent project(Map<String, List<String>> data, DomContent content) {
-
   String name = data.getOrDefault("name", List.of("Unknown Project")).get(0);
-  String status = data.getOrDefault("status", List.of("Unknown Status")).get(0);
-  String javaVersion = data.getOrDefault("javaVersion", List.of("Unknown Java Version")).get(0);
-  String learningCurve = data.getOrDefault("learningCurve", List.of("Unknown Learning Curve")).get(0);
-  String lastRelease = data.getOrDefault("lastRelease", List.of("Unknown Last Release")).get(0);
+  String status = data.getOrDefault("status", List.of()).stream().findFirst().orElse("");
+  String javaVersion = data.getOrDefault("javaVersion", List.of()).stream().findFirst().orElse("");
+  String learningCurve = data.getOrDefault("learningCurve", List.of()).stream().findFirst().orElse("");
+  String lastRelease = data.getOrDefault("lastRelease", List.of()).stream().findFirst().orElse("");
   String lastReleaseHref = data.getOrDefault("lastReleaseHref", List.of()).stream().findFirst().orElse("");
-  String learnMoreText = data.getOrDefault("learnMoreText", List.of("Learn More")).get(0);
-  String learnMoreHref = data.getOrDefault("learnMoreHref", List.of("#")).get(0);
-  String image = data.getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
+  String learnMoreText = data.getOrDefault("learnMoreText", List.of("Official project")).get(0);
+  String learnMoreHref = data.getOrDefault("learnMoreHref", List.of()).stream().findFirst().orElse("");
+  String image = data.getOrDefault("image", List.of()).stream().findFirst().orElse("");
+  String description = data.getOrDefault("_description", List.of()).stream().findFirst().orElse("");
   List<String> tags = data.getOrDefault("tags", List.of());
 
-  return div(
-    div(
-      a("← Back")
-        .withHref("index.html")
-        .attr("onclick", "history.back(); return false;") // just navigate back in history for better UX, instead of reloading the page
-//        .attr("hx-get", "index.html")
-//        .attr("hx-target", "body")
-//        .attr("hx-swap", "innerHTML transition:true show:window:top")
-//        .attr("hx-push-url", "true")
-        .withClass("back-link")
-    ).attr("data-pagefind-ignore", ""),
-    each(
-      h1(name).attr("data-pagefind-meta", "title"),
-      img().withSrc(image).withAlt(name)
-        .attr("data-pagefind-meta", "thumbnail:" + getThumbnailUrl(image)),
-      p("Status: " + status),
-      p("Java Version: " + javaVersion),
-      p("Learning Curve: " + learningCurve),
-      p(
-        text("Last Release: "),
-        lastReleaseHref.isBlank()
-          ? text(lastRelease)
-          : a(lastRelease)
-              .withHref(lastReleaseHref)
-              .withTarget("_blank")
-              .attr("rel", "noopener noreferrer")
-      ),
-      a(
-        text(learnMoreText),
-        i().withClass("bi bi-box-arrow-up-right")
-      ).withHref(learnMoreHref).withTarget("_blank"),
-      div(
-        each(tags, tag -> {
-          String tagSlug = tagToSlug(tag);
-          String tagFileName = "tag-" + tagSlug + ".html";
-          return a(tag)
-            .withHref(tagFileName)
-            .attr("hx-get", tagFileName)
-            .attr("hx-target", "body")
-            .attr("hx-swap", "innerHTML transition:true show:window:top")
-            .attr("hx-push-url", "true")
-            .withClass("tag");
-        })
-      ).withClass("tags"),
-      content
-    )
-  ).withId("main-content").attr("data-pagefind-body", "");
+  List<DomContent> facts = new ArrayList<>();
+  if (!status.isBlank()) facts.add(div(span("Status"), strong(status)).withClass("project-fact"));
+  if (!javaVersion.isBlank()) facts.add(div(span("Java"), strong(javaVersion)).withClass("project-fact"));
+  if (!learningCurve.isBlank()) facts.add(div(span("Learning curve"), strong(learningCurve)).withClass("project-fact"));
+  if (!lastRelease.isBlank()) {
+    facts.add(div(
+      span("Latest release"),
+      lastReleaseHref.isBlank()
+        ? strong(lastRelease)
+        : a(lastRelease).withHref(lastReleaseHref).withTarget("_blank")
+            .attr("rel", "noopener noreferrer")
+    ).withClass("project-fact"));
+  }
 
+  return j2html.TagCreator.main(
+    div(
+      a("← All projects").withHref("index.html#browse-section").withClass("back-link")
+    ).withClass("project-back").attr("data-pagefind-ignore", ""),
+    section(
+      div(
+        span(tags.isEmpty() ? "Java UI project" : tags.get(0)).withClass("eyebrow"),
+        h1(name).attr("data-pagefind-meta", "title"),
+        p(description).withClass("project-lede"),
+        div(
+          learnMoreHref.isBlank()
+            ? span("Official link not provided").withClass("project-official-link")
+            : a(text(learnMoreText), i().withClass("bi bi-arrow-up-right"))
+                .withHref(learnMoreHref).withTarget("_blank")
+                .attr("rel", "noopener noreferrer")
+                .withClass("project-official-link"),
+          a("Browse all projects →").withHref("index.html#browse-section").withClass("project-directory-link")
+        ).withClass("project-actions"),
+        div(each(facts.stream())).withClass("project-facts"),
+        div(
+          each(tags, tag -> {
+            String tagFileName = "tag-" + tagToSlug(tag) + ".html";
+            return a(tag)
+              .withHref(tagFileName)
+              .attr("hx-get", tagFileName)
+              .attr("hx-target", "body")
+              .attr("hx-swap", "innerHTML transition:true show:window:top")
+              .attr("hx-push-url", "true")
+              .withClass("tag");
+          })
+        ).withClass("tags project-tags")
+      ).withClass("project-heading"),
+      image.isBlank()
+        ? span().withClass("project-hero-image project-image-missing")
+        : img().withSrc(image).withAlt(name + " interface")
+            .attr("data-pagefind-meta", "thumbnail:" + getThumbnailUrl(image))
+            .attr("fetchpriority", "high")
+            .withClass("project-hero-image")
+    ).withClass("project-overview"),
+    article(content).withClass("project-copy")
+  ).withId("main-content").attr("data-pagefind-body", "");
+}
+
+private static String extractDescription(String html) {
+  int paragraphStart = html.indexOf("<p>");
+  if (paragraphStart < 0) return "";
+  int textStart = paragraphStart + 3;
+  int paragraphEnd = html.indexOf("</p>", textStart);
+  if (paragraphEnd < 0) return "";
+  String description = html.substring(textStart, paragraphEnd)
+    .replaceAll("<[^>]*>", " ")
+    .replaceAll("&[a-zA-Z#0-9]+;", " ")
+    .replaceAll("\\s+", " ")
+    .trim();
+  if (description.length() <= 190) return description;
+  int cutoff = description.lastIndexOf(' ', 190);
+  return description.substring(0, cutoff > 0 ? cutoff : 190).trim() + "...";
 }
 
 private static Set<String> collectUniqueTags(Map<String, Map<String, List<String>>> markdownData) {
@@ -240,6 +265,97 @@ private static String tagToSlug(String tag) {
   return tag.toLowerCase()
     .replaceAll("\\s+", "-")
     .replaceAll("[^a-z0-9-]", "");
+}
+
+private static DomContent projectCard(String htmlFileName, Map<String, List<String>> data) {
+  String name = data.getOrDefault("name", List.of("Unknown Project")).get(0);
+  String image = data.getOrDefault("image", List.of()).stream().findFirst().orElse("");
+  String imageUrl = getThumbnailUrl(image);
+  String description = data.getOrDefault("_description", List.of()).stream().findFirst().orElse("");
+  String learnMoreText = data.getOrDefault("learnMoreText", List.of("Official project")).get(0);
+  String learnMoreHref = data.getOrDefault("learnMoreHref", List.of()).stream().findFirst().orElse("");
+  List<String> tags = data.getOrDefault("tags", List.of());
+
+  return article(
+    a(
+      img().withSrc(imageUrl).withAlt(name + " interface")
+        .attr("loading", "lazy")
+        .attr("decoding", "async")
+        .withClass("project-thumbnail")
+    )
+      .withHref(htmlFileName)
+      .attr("hx-get", htmlFileName)
+      .attr("hx-target", "body")
+      .attr("hx-swap", "innerHTML transition:true show:window:top")
+      .attr("hx-push-url", "true")
+      .withClass("project-card-media"),
+    div(
+      tags.isEmpty() ? span("Java UI").withClass("project-card-tag") : span(tags.get(0)).withClass("project-card-tag"),
+      h3(a(name).withHref(htmlFileName)
+        .attr("hx-get", htmlFileName)
+        .attr("hx-target", "body")
+        .attr("hx-swap", "innerHTML transition:true show:window:top")
+        .attr("hx-push-url", "true")),
+      p(description),
+      div(
+        learnMoreHref.isBlank()
+          ? span("Official link not provided").withClass("project-card-official")
+          : a(text(learnMoreText), i().withClass("bi bi-arrow-up-right"))
+              .withHref(learnMoreHref).withTarget("_blank")
+              .attr("rel", "noopener noreferrer")
+              .withClass("project-card-official"),
+        a("Project details").withHref(htmlFileName).withClass("project-card-details")
+      ).withClass("project-card-actions")
+    ).withClass("project-card-copy")
+  ).withClass("project-card");
+}
+
+private static long countProjectsWithTag(Map<String, Map<String, List<String>>> markdownData, String tag) {
+  return markdownData.values().stream()
+    .filter(data -> data.getOrDefault("tags", List.of()).contains(tag))
+    .count();
+}
+
+private static DomContent categoryPanel(Map<String, Map<String, List<String>>> markdownData, String tag, String icon, String style) {
+  String tagFileName = "tag-" + tagToSlug(tag) + ".html";
+  String examples = markdownData.entrySet().stream()
+    .filter(entry -> entry.getValue().getOrDefault("tags", List.of()).contains(tag))
+    .map(entry -> entry.getValue().getOrDefault("name", List.of()).get(0))
+    .sorted()
+    .limit(3)
+    .collect(java.util.stream.Collectors.joining(" / "));
+  return a(
+    i().withClass("bi " + icon).attr("aria-hidden", "true"),
+    div(
+      span(tag).withClass("category-title"),
+      span(examples).withClass("category-examples"),
+      span(countProjectsWithTag(markdownData, tag) + " projects").withClass("category-count")
+    ),
+    span("Explore →").withClass("category-arrow")
+  )
+    .withHref(tagFileName)
+    .attr("hx-get", tagFileName)
+    .attr("hx-target", "body")
+    .attr("hx-swap", "innerHTML transition:true show:window:top")
+    .attr("hx-push-url", "true")
+    .withClass("category-panel " + style);
+}
+
+private static DomContent heroPreview(String fileName, Map<String, Map<String, List<String>>> markdownData, String style) {
+  Map<String, List<String>> data = markdownData.get(fileName);
+  String name = data.getOrDefault("name", List.of("Java UI project")).get(0);
+  String image = data.getOrDefault("image", List.of()).stream().findFirst().orElse("");
+  return figure(
+    a(
+      img().withSrc(getThumbnailUrl(image)).withAlt(name + " interface preview")
+        .attr("loading", "eager")
+        .attr("fetchpriority", "high")
+    ).withHref(fileName),
+    figcaption(
+      span(name),
+      i().withClass("bi bi-arrow-up-right").attr("aria-hidden", "true")
+    )
+  ).withClass("hero-preview " + style);
 }
 
 /**
@@ -278,62 +394,26 @@ static DomContent tagPage(String tag, Map<String, Map<String, List<String>>> mar
     }
   }
   
-  return div(
+  return j2html.TagCreator.main(
     div(
-        a("← Back")
-        .withHref("index.html")
-        .attr("onclick", "history.back(); return false;") // just navigate back in history for better UX, instead of reloading the page
-//        .attr("hx-get", "index.html")
-//        .attr("hx-target", "body")
-//        .attr("hx-swap", "innerHTML transition:true show:window:top")
-//        .attr("hx-push-url", "true")
-        .withClass("back-link")
-    ),
-    h1("Projects tagged: " + tag),
+      a("← All projects").withHref("index.html#browse-section").withClass("back-link")
+    ).withClass("tag-page-back"),
+    section(
+      span("Browse by category").withClass("section-kicker"),
+      h1(tag).withClass("tag-page-title"),
+      p("Explore " + filteredProjects.size() + " projects tagged " + tag + ".")
+        .withClass("tag-page-description")
+    ).withClass("tag-page-heading"),
     div(
-      each(filteredProjects.entrySet(), entry -> {
-        String htmlFileName = entry.getKey();
-        String projectName = entry.getValue().getOrDefault("name", List.of("ProjectX")).get(0);
-        String imageUrl = entry.getValue().getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
-        String thumbnailUrl = getThumbnailUrl(imageUrl);
-        return a(
-          div(
-            img().withSrc(thumbnailUrl).withAlt(projectName).withClass("project-thumbnail"),
-            div(projectName).withClass("project-name")
-          ).withClass("project-card-content")
-        )
-          .withHref(htmlFileName)
-          .attr("hx-get", htmlFileName)
-          .attr("hx-target", "body")
-          .attr("hx-swap", "innerHTML transition:true show:window:top")
-          .attr("hx-push-url", "true")
-          .withClass("project-card");
-      })
-    ).withClass("project-list")
-  ).withId("main-content");
+      each(filteredProjects.entrySet(), entry -> projectCard(entry.getKey(), entry.getValue()))
+    ).withClass("project-list").withId("tag-projects")
+  ).withId("main-content").withClass("tag-page");
 }
 
 // Grid content for initial page render (no OOB button)
 static DomContent gridAlphabeticalContent(Map<String, Map<String, List<String>>> markdownData) {
   return div(
-    each( markdownData.entrySet(), entry -> {
-      String htmlFileName = entry.getKey();
-      String projectName = entry.getValue().getOrDefault("name", List.of("ProjectX")).get(0);
-      String imageUrl = entry.getValue().getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
-      String thumbnailUrl = getThumbnailUrl(imageUrl);
-      return a(
-        div(
-          img().withSrc(thumbnailUrl).withAlt(projectName).withClass("project-thumbnail"),
-          div(projectName).withClass("project-name")
-        ).withClass("project-card-content")
-      )
-        .withHref(htmlFileName)
-        .attr("hx-get", htmlFileName)
-        .attr("hx-target", "body")
-        .attr("hx-swap", "innerHTML transition:true show:window:top")
-        .attr("hx-push-url", "true")
-        .withClass("project-card");
-    })
+    each(markdownData.entrySet(), entry -> projectCard(entry.getKey(), entry.getValue()))
   ).withClass("project-list").withId("browse-section");
 }
 
@@ -362,24 +442,7 @@ static DomContent gridByTagContent(Map<String, Map<String, List<String>>> markdo
       return div(
         h2(tag).withClass("tag-group-title"),
         div(
-          each(filteredProjects.entrySet(), entry -> {
-            String htmlFileName = entry.getKey();
-            String projectName = entry.getValue().getOrDefault("name", List.of("ProjectX")).get(0);
-            String imageUrl = entry.getValue().getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
-            String thumbnailUrl = getThumbnailUrl(imageUrl);
-            return a(
-              div(
-                img().withSrc(thumbnailUrl).withAlt(projectName).withClass("project-thumbnail"),
-                div(projectName).withClass("project-name")
-              ).withClass("project-card-content")
-            )
-              .withHref(htmlFileName)
-              .attr("hx-get", htmlFileName)
-              .attr("hx-target", "body")
-              .attr("hx-swap", "innerHTML transition:true show:window:top")
-              .attr("hx-push-url", "true")
-              .withClass("project-card");
-          })
+          each(filteredProjects.entrySet(), entry -> projectCard(entry.getKey(), entry.getValue()))
         ).withClass("project-list")
       ).withClass("tag-group");
     })
@@ -407,24 +470,7 @@ static DomContent gridByDateContent(Map<String, Map<String, List<String>>> markd
     .forEach(entry -> sortedData.put(entry.getKey(), entry.getValue()));
   
   return div(
-    each(sortedData.entrySet(), entry -> {
-      String htmlFileName = entry.getKey();
-      String projectName = entry.getValue().getOrDefault("name", List.of("ProjectX")).get(0);
-      String imageUrl = entry.getValue().getOrDefault("image", List.of("https://via.placeholder.com/150")).get(0);
-      String thumbnailUrl = getThumbnailUrl(imageUrl);
-      return a(
-        div(
-          img().withSrc(thumbnailUrl).withAlt(projectName).withClass("project-thumbnail"),
-          div(projectName).withClass("project-name")
-        ).withClass("project-card-content")
-      )
-        .withHref(htmlFileName)
-        .attr("hx-get", htmlFileName)
-        .attr("hx-target", "body")
-        .attr("hx-swap", "innerHTML transition:true show:window:top")
-        .attr("hx-push-url", "true")
-        .withClass("project-card");
-    })
+    each(sortedData.entrySet(), entry -> projectCard(entry.getKey(), entry.getValue()))
   ).withClass("project-list").withId("browse-section");
 }
 
@@ -470,34 +516,31 @@ static DomContent sortButtons(String activeSort) {
 }
 
 static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData) {
-  // Collect unique tags
-  Set<String> uniqueTags = collectUniqueTags(markdownData);
+  Set<String> uniqueTags = new TreeSet<>(collectUniqueTags(markdownData));
+  String[][] categories = {
+    {"Desktop UI", "bi-display", "category-orange"},
+    {"Web UI", "bi-globe2", "category-blue"},
+    {"Mobile UI", "bi-phone", "category-pink"},
+    {"Terminal UI", "bi-terminal", "category-yellow"}
+  };
+  List<String> featuredFiles = List.of("javafx.html", "vaadin.html", "codename-one.html", "lanterna.html", "fxgl.html");
 
-  return div(
-    // Hero Section with split layout
-    div(
-      // Left column - Title and CTA
-      div(
-        h1("Awesome Java UI").withClass("hero-title"),
-        a(
-          i().withClass("bi bi-github"),
-          text(" Contribute on GitHub")
-        )
-          .withHref("https://github.com/teggr/java-ui-the-complete-guide")
-          .withTarget("_blank")
-          .withRel("noopener noreferrer")
-          .withClass("github-cta")
-      ).withClass("hero-left"),
-      // Right column - Description paragraphs
-      div(
-        p("Welcome to Awesome Java UI! This site provides an overview of the latest and greatest Java UI projects, frameworks and libraries, along with their status, Java version compatibility, learning curve, last release date, and more. Explore the projects below to find the right Java UI solution for your needs."),
-        p("This is a community-driven resource, built by Java developers for Java developers. Whether you're discovering a new framework, sharing your expertise, or helping others navigate the Java UI landscape - your contributions make this guide better for everyone. Join us in building the most comprehensive resource for Java UI development!")
-      ).withClass("hero-right")
-    ).withClass("hero-section"),
+  return j2html.TagCreator.main(
     section(
-      h2("Search projects").withId("search-heading"),
-      p("Search names, descriptions, metadata and code examples. No matches? Try fewer words or clear the query."),
-      rawHtml("""
+      div(
+        span("Explore · Discover · Build").withClass("hero-eyebrow"),
+        h1(
+          span("JAVA UI").withClass("hero-title-line"),
+          span(
+            text("WITHOUT "),
+            span(text("LIMITS"), span(".").withClass("signal-dot")).withClass("hero-title-accent")
+          ).withClass("hero-title-line hero-title-end")
+        ).withClass("hero-title"),
+        p("A curated directory of frameworks, libraries and tools for building interfaces with Java. From desktop and web to mobile, terminal and beyond.")
+          .withClass("hero-description"),
+        div(
+          h2("Find your next Java UI project").withClass("search-label").withId("search-heading"),
+          rawHtml("""
         <pagefind-input placeholder="Search Java UI frameworks…"></pagefind-input>
         <pagefind-summary></pagefind-summary>
         <pagefind-results hide-sub-results>
@@ -506,7 +549,7 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
               <a class="pf-result-link" href="{{ url | safeUrl }}">
                 <div class="project-card-content">
                   <img class="pf-result-image project-thumbnail" src="{{ meta.thumbnail }}" alt="">
-                  <div class="project-name">{{ meta.title }}</div>
+                  <div class="project-name">{{ meta.title }} <span aria-hidden="true">↗</span></div>
                 </div>
               </a>
             </li>
@@ -533,38 +576,91 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
           });
         </script>
         """),
-      noscript("Search requires JavaScript. You can still browse all projects and tags below.")
-    ).withClass("catalogue-search").attr("aria-labelledby", "search-heading"),
-    // Sort controls section - above the project grid
-    div(
+          div(
+            a("Desktop UI").withHref("tag-desktop-ui.html"),
+            a("Web UI").withHref("tag-web-ui.html"),
+            a("Mobile UI").withHref("tag-mobile-ui.html"),
+            a("Terminal UI").withHref("tag-terminal-ui.html")
+          ).withClass("hero-quick-links"),
+          noscript("Search requires JavaScript. Browse the complete project catalogue below.")
+        ).withClass("catalogue-search").attr("aria-labelledby", "search-heading")
+      ).withClass("hero-copy"),
       div(
-        button(
-          i().withClass("bi bi-sort-alpha-down"),
-          text(" Alphabetical")
-        )
-          .withClass("sort-btn active")
-          .attr("hx-get", "grid-alphabetical.html")
-          .attr("hx-target", "#browse-section")
-          .attr("hx-swap", "outerHTML transition:true"),
-        button(
-          i().withClass("bi bi-tags"),
-          text(" Platform")
-        )
-          .withClass("sort-btn")
-          .attr("hx-get", "grid-by-tag.html")
-          .attr("hx-target", "#browse-section")
-          .attr("hx-swap", "outerHTML transition:true"),
-        button(
-          i().withClass("bi bi-clock-history"),
-          text(" Recently Added")
-        )
-          .withClass("sort-btn")
-          .attr("hx-get", "grid-by-date.html")
-          .attr("hx-target", "#browse-section")
-          .attr("hx-swap", "outerHTML transition:true")
-      ).withClass("sort-button-group").withId("sort-buttons")
-    ).withClass("sort-controls-section"),
-    gridAlphabeticalContent(markdownData),
+        span().withClass("hero-shape hero-shape-orange").attr("aria-hidden", "true"),
+        span().withClass("hero-shape hero-shape-blue").attr("aria-hidden", "true"),
+        span().withClass("hero-shape hero-shape-yellow").attr("aria-hidden", "true"),
+        heroPreview("vaadin.html", markdownData, "preview-vaadin"),
+        heroPreview("codename-one.html", markdownData, "preview-mobile"),
+        heroPreview("javafx.html", markdownData, "preview-javafx"),
+        div(
+          span("Real projects. Real possibilities.").withClass("hero-art-caption"),
+          a("Explore the directory ↓").withHref("#category-section")
+        ).withClass("hero-art-note")
+      ).withClass("hero-art").attr("aria-label", "JavaFX, Vaadin and Codename One project previews")
+    ).withClass("hero-section"),
+    section(
+      div(
+        span("Find your platform").withClass("section-kicker"),
+        h2("Four ways to build").withClass("section-title")
+      ).withClass("section-heading"),
+      div(each(Arrays.stream(categories).map(category ->
+        categoryPanel(markdownData, category[0], category[1], category[2])
+      ))).withClass("category-grid")
+    ).withId("category-section").withClass("category-section"),
+    section(
+      div(
+        div(
+          span("A few worth a closer look").withClass("section-kicker section-kicker-light"),
+          h2("Featured projects").withClass("section-title section-title-light")
+        ),
+        a("Browse all projects →").withHref("#browse-section").withClass("featured-all-link")
+      ).withClass("featured-heading"),
+      div(each(featuredFiles, fileName -> projectCard(fileName, markdownData.get(fileName))))
+        .withClass("featured-grid")
+    ).withId("featured-section").withClass("featured-section"),
+    section(
+      div(
+        div(
+          span("The whole Java UI landscape").withClass("section-kicker"),
+          h2("Browse all projects").withClass("section-title").withId("browse-heading"),
+          p("Filter the catalogue by platform, technology or project type.").withClass("catalogue-intro")
+        ),
+        a("Back to top ↑").withHref("#main-content").withClass("back-to-top")
+      ).withClass("catalogue-heading"),
+      div(
+        a("All projects").withHref("#browse-section").withClass("catalogue-filter catalogue-filter-all"),
+        each(uniqueTags, tag -> a(tag).withHref("tag-" + tagToSlug(tag) + ".html").withClass("catalogue-filter"))
+      ).withClass("catalogue-filters").attr("aria-label", "Filter projects by category"),
+      div(
+        div(
+          button(
+            i().withClass("bi bi-sort-alpha-down"),
+            text(" Alphabetical")
+          )
+            .withClass("sort-btn active")
+            .attr("hx-get", "grid-alphabetical.html")
+            .attr("hx-target", "#browse-section")
+            .attr("hx-swap", "outerHTML transition:true"),
+          button(
+            i().withClass("bi bi-tags"),
+            text(" Platform")
+          )
+            .withClass("sort-btn")
+            .attr("hx-get", "grid-by-tag.html")
+            .attr("hx-target", "#browse-section")
+            .attr("hx-swap", "outerHTML transition:true"),
+          button(
+            i().withClass("bi bi-clock-history"),
+            text(" Recently Added")
+          )
+            .withClass("sort-btn")
+            .attr("hx-get", "grid-by-date.html")
+            .attr("hx-target", "#browse-section")
+            .attr("hx-swap", "outerHTML transition:true")
+        ).withClass("sort-button-group").withId("sort-buttons")
+      ).withClass("sort-controls-section"),
+      gridAlphabeticalContent(markdownData)
+    ).withId("catalogue-section").withClass("catalogue-section"),
     div(
       hr().withClass("tag-separator"),
       div(
@@ -721,7 +817,6 @@ static HtmlTag output(DomContent content, SeoMetadata seo) {
       // Fonts and stylesheets
       link().withRel("preconnect").withHref("https://fonts.googleapis.com"),
       link().withRel("preconnect").withHref("https://fonts.gstatic.com").attr("crossorigin", ""),
-      link().withRel("stylesheet").withHref("https://fonts.googleapis.com/css2?family=Poppins:wght@700;800&display=swap"),
       link().withRel("stylesheet").withHref("css/styles.css"),
       link().withRel("stylesheet").withHref("pagefind/pagefind-component-ui.css"),
       script().withType("module").withSrc("pagefind/pagefind-component-ui.js"),
@@ -731,16 +826,46 @@ static HtmlTag output(DomContent content, SeoMetadata seo) {
       script().withSrc("https://scripts.simpleanalyticscdn.com/latest.js").attr("async", "")
     ),
     body(
+      siteHeader(),
       content,
       siteFooter()
     )
   ).attr("lang", "en");
 }
 
+private static DomContent siteHeader() {
+  return header(
+    div(
+      a(
+        span("AWESOME").withClass("brand-line"),
+        span("JAVA UI").withClass("brand-line brand-strong"),
+        span(".").withClass("brand-dot")
+      ).withHref("index.html").withClass("site-brand").attr("aria-label", "Awesome Java UI home"),
+      nav(
+        a("Projects").withHref("index.html#browse-section"),
+        a("Categories").withHref("index.html#category-section"),
+        a("About").withHref("index.html#about-section")
+      ).withClass("site-nav").attr("aria-label", "Main navigation"),
+      div(
+        a("Search").withHref("index.html#search-heading").withClass("header-search"),
+        a(
+          i().withClass("bi bi-github").attr("aria-hidden", "true"),
+          span("GitHub")
+        ).withHref("https://github.com/teggr/awesome-java-ui")
+          .withTarget("_blank")
+          .withRel("noopener noreferrer")
+          .withClass("header-github")
+          .attr("aria-label", "Awesome Java UI on GitHub")
+      ).withClass("header-actions")
+    ).withClass("header-inner")
+  ).withClass("site-header").attr("data-pagefind-ignore", "");
+}
+
 private static DomContent siteFooter() {
   return footer(
     div(
       div(
+        span("A community-made guide to Java interfaces.").withClass("footer-tagline"),
         text("Built with "),
         a(
           i().withClass("bi bi-hammer"),
@@ -768,7 +893,12 @@ private static DomContent siteFooter() {
           .withTarget("_blank")
           .withRel("noopener noreferrer")
           .withClass("footer-link")
-      ).withClass("footer-content")
+      ).withClass("footer-content"),
+      a("Contribute on GitHub →")
+        .withHref("https://github.com/teggr/awesome-java-ui")
+        .withTarget("_blank")
+        .withRel("noopener noreferrer")
+        .withClass("footer-contribute")
     ).withClass("footer-container")
   ).withClass("site-footer");
 }
