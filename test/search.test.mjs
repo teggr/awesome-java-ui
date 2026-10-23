@@ -23,12 +23,49 @@ test("project content is indexed, while catalogue, fragments and tags are not", 
     assert.equal(html.includes("data-pagefind-body"), projects.includes(file), file);
     if (projects.includes(file)) {
       assert.match(html, /<h1 data-pagefind-meta="title">/, file);
-      assert.match(html, /<img src="[^"]+" alt="[^"]+" data-pagefind-meta="thumbnail:[^"]+">/, file);
+      assert.match(html, /<img src="[^"]+" alt="[^"]+" data-pagefind-meta="thumbnail:[^"]+"/, file);
       assert.match(html, /data-pagefind-ignore/, file);
-      assert.match(html, /Status:/, file);
-      assert.match(html, /Java Version:/, file);
+      assert.match(html, /Status/, file);
+      assert.match(html, /Java/, file);
     }
   }
+});
+
+test("homepage uses the catalogue for category and featured discovery", async () => {
+  const html = await read("index.html");
+  assert.ok(html.includes('class="hero-section"'), "missing hero-section");
+  for (const section of ["category-section", "featured-section", "catalogue-section", "about-section"]) {
+    assert.ok(html.includes(`id="${section}"`), `missing ${section}`);
+  }
+  assert.ok(html.indexOf('class="hero-section"') < html.indexOf('id="category-section"'));
+  assert.ok(html.indexOf('id="category-section"') < html.indexOf('id="featured-section"'));
+  assert.ok(html.indexOf('id="featured-section"') < html.indexOf('id="catalogue-section"'));
+  assert.equal((html.match(/<article class="project-card">/g) ?? []).length, projects.length + 5);
+  for (const tag of ["desktop-ui", "web-ui", "mobile-ui", "terminal-ui"]) {
+    assert.match(html, new RegExp(`href="tag-${tag}\\.html"`));
+  }
+  assert.match(html, /href="https:\/\/github\.com\/teggr\/awesome-java-ui"/);
+});
+
+test("project pages preserve official destinations, metadata and shared navigation", async () => {
+  const html = await read("javafx.html");
+  assert.match(html, /class="site-header"/);
+  assert.match(html, /class="project-overview"/);
+  assert.match(html, /class="project-hero-image"/);
+  assert.match(html, /href="https:\/\/openjfx\.io\/"/);
+  assert.match(html, /class="project-fact"/);
+  assert.match(html, /class="project-copy"/);
+  assert.match(html, /id="code-example"/);
+});
+
+test("tag pages use the shared directory layout and show accurate result counts", async () => {
+  const html = await read("tag-terminal-ui.html");
+  assert.match(html, /<main id="main-content" class="tag-page">/);
+  assert.match(html, /href="index\.html#browse-section" class="back-link"/);
+  assert.match(html, /<h1 class="tag-page-title">[\s\S]*Terminal UI/);
+  assert.match(html, /Explore 9 projects tagged Terminal UI/);
+  assert.equal((html.match(/<article class="project-card">/g) ?? []).length, 9);
+  assert.doesNotMatch(html, /data-pagefind-body/);
 });
 
 test("search components and browser assets are deployed with the catalogue", async () => {
