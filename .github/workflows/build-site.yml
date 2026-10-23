@@ -40,6 +40,9 @@ jobs:
       - name: Setup JBang
         uses: jbangdev/setup-jbang@v0.1.1
 
+      - name: Build site with JBang
+        run: jbang run build.java
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -49,8 +52,8 @@ jobs:
       - name: Install search build tooling
         run: npm ci
 
-      - name: Build and index site
-        run: npm run build
+      - name: Index generated site with Pagefind
+        run: npm run search:index
 
       - name: Validate search output
         run: npm test

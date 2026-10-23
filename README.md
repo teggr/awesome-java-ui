@@ -12,7 +12,8 @@ The easiest way to get started is with our pre-configured development environmen
 1. Open this repository in GitHub Codespaces or VS Code with DevContainers
 2. The environment will automatically set up Java 25 and JBang
 3. Ensure Node.js 22+ and npm are installed (they are additional search-build prerequisites)
-4. Run `npm ci` and `npm run build` to build and index the site
+4. Run `jbang run build.java` to generate the site, then `npm ci` and
+   `npm run search:index` to build the Pagefind search index
 5. Run `npm run preview` and open `http://localhost:1414` to view the site
 
 ### Option 2: Local Development
@@ -27,11 +28,14 @@ The easiest way to get started is with our pre-configured development environmen
 # Generate thumbnails for images (run this after adding new images)
 jbang GenerateThumbnails.java
 
-# Install the locked search build dependency
+# Generate the site HTML
+jbang run build.java
+
+# Install the locked Pagefind dependency
 npm ci
 
-# Build the HTML, then generate the search index and browser assets in _site/pagefind/
-npm run build
+# Index the generated HTML and write browser assets to _site/pagefind/
+npm run search:index
 
 # Validate the generated search output
 npm test
@@ -46,11 +50,12 @@ The site will be available at `http://localhost:1414`. Use HTTP rather than open
 ### Static search
 
 [Pagefind](https://pagefind.app/) **1.5.2**, pinned in `package.json` and
-`package-lock.json`, indexes the generated HTML after JBang finishes. No search
-service, global npm installation, or separate catalogue data is needed.
-`jbang run build.java` still generates HTML independently; run
-`npm run search:index` afterwards if building that way. Reindex after content
-changes. For a clean build, remove `_site/` first so deleted projects do not linger.
+`package-lock.json`, indexes the generated HTML after JBang finishes. JBang
+generates the site; Node/npm only run Pagefind and its validation tests. No
+search service, global npm installation, or separate catalogue data is needed.
+Run `npm run search:index` after `jbang run build.java`, and reindex after
+content changes. For a clean build, remove `_site/` first so deleted projects
+do not linger.
 
 Only individual project pages are indexed, using `data-pagefind-body`.
 Back navigation, footers, catalogue copies, tag pages and HTMX fragments are
@@ -68,7 +73,8 @@ ordinary browser back/forward caching may retain it. Sorting continues to affect
 the catalogue below the independent search results.
 
 **Validation:** `npm test` checks the generated page count, indexing markers,
-project-title metadata and deployed search assets; run it after `npm run build`.
+project-title metadata and deployed search assets; run it after
+`jbang run build.java` and `npm run search:index`.
 For browser smoke tests, try `JavaFX` (project name), `hardware accelerated`
 (description), `Terminal UI` (tag), `Production-ready` (status), `17` (Java version),
 `HelloJavaFX` (code), and `zzzznonexistentframework` (empty state). Check Clear and
@@ -77,8 +83,9 @@ navigation and browser Back, including at a narrow mobile viewport.
 Search is word-based, not literal source-code or structured-version matching.
 Default ranking may put a related project ahead of an exact project-name match.
 
-GitHub Actions runs the same `npm ci`, `npm run build`, and `npm test` sequence,
-then uploads all of `_site/`, including `pagefind/`, for static deployment.
+GitHub Actions runs `jbang run build.java`, then `npm ci`, `npm run search:index`,
+and `npm test`, before uploading all of `_site/`, including `pagefind/`, for
+static deployment.
 Neither `_site/` nor `node_modules/` is committed.
 
 ### Scheduled release audit
