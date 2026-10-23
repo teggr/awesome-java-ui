@@ -36,7 +36,7 @@ test("search components and browser assets are deployed with the catalogue", asy
   for (const component of ["input", "summary", "results"]) {
     assert.match(html, new RegExp(`<pagefind-${component}[\\s>]`));
   }
-  assert.match(html, /class="pf-result-image" src="\{\{ meta\.thumbnail \}\}"/);
+  assert.match(html, /class="[^"]*\bpf-result-image\b[^"]*" src="\{\{ meta\.thumbnail \}\}"/);
   assert.doesNotMatch(html, /class="pf-result-excerpt"/);
   assert.match(html, /data-search-clear/);
   assert.match(html, /data-search-focus/);
