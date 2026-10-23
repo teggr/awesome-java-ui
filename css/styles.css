@@ -168,6 +168,24 @@ body.htmx-settling {
   }
 }
 
+/* === Catalogue Search === */
+.catalogue-search {
+  margin-bottom: var(--spacing-xl);
+  --pf-font: var(--font-family);
+  --pf-text: var(--color-text);
+  --pf-text-secondary: var(--color-text-secondary);
+  --pf-text-muted: var(--color-text-secondary);
+  --pf-background: var(--color-surface);
+  --pf-border: var(--color-stormy-teal);
+  --pf-border-focus: var(--color-stormy-teal);
+  --pf-outline-focus: var(--color-stormy-teal);
+  --pf-hover: var(--color-bg-warm);
+  --pf-input-height: 48px;
+  --pf-result-title-font-size: 18px;
+  --pf-result-excerpt-font-size: 16px;
+  --pf-summary-font-size: 16px;
+}
+
 /* === Typography === */
 h1 {
   font-family: var(--font-family-heading);

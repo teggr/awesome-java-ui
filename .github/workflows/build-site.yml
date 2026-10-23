@@ -40,10 +40,20 @@ jobs:
       - name: Setup JBang
         uses: jbangdev/setup-jbang@v0.1.1
 
-      - name: Build site with JBang
-        # this outputs to the /docs folder
-        run: |
-          jbang run build.java
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install search build tooling
+        run: npm ci
+
+      - name: Build and index site
+        run: npm run build
+
+      - name: Validate search output
+        run: npm test
 
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
