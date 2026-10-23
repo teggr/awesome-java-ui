@@ -14,6 +14,9 @@ import org.commonmark.ext.heading.anchor.HeadingAnchorExtension;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+
 import static j2html.TagCreator.*;
 
 void main(String... args) throws IOException {
@@ -482,6 +485,64 @@ static DomContent gridByDate(Map<String, Map<String, List<String>>> markdownData
   );
 }
 
+private static List<String> rotatingProjectFiles(
+  Map<String, Map<String, List<String>>> markdownData,
+  List<String> categories,
+  LocalDate rotationDate
+) {
+  Set<String> selected = new LinkedHashSet<>();
+  List<Map.Entry<String, Map<String, List<String>>>> eligibleProjects = markdownData.entrySet().stream()
+    .filter(entry -> {
+      String status = String.join(" ", entry.getValue().getOrDefault("status", List.of()))
+        .toLowerCase(Locale.ROOT);
+      return !status.contains("archived")
+        && !status.contains("legacy")
+        && !status.contains("no longer maintained");
+    })
+    .sorted(Map.Entry.comparingByKey())
+    .toList();
+
+  for (int categoryIndex = 0; categoryIndex < categories.size(); categoryIndex++) {
+    String category = categories.get(categoryIndex);
+    List<String> candidates = eligibleProjects.stream()
+      .filter(entry -> entry.getValue().getOrDefault("tags", List.of()).contains(category))
+      .map(Map.Entry::getKey)
+      .toList();
+
+    if (candidates.isEmpty()) {
+      continue;
+    }
+
+    int startIndex = (int) Math.floorMod(
+      rotationDate.toEpochDay() + categoryIndex,
+      (long) candidates.size()
+    );
+    for (int offset = 0; offset < candidates.size(); offset++) {
+      String candidate = candidates.get((startIndex + offset) % candidates.size());
+      if (selected.add(candidate)) {
+        break;
+      }
+    }
+  }
+
+  if (selected.size() < categories.size()) {
+    List<String> remainingCandidates = eligibleProjects.stream()
+      .map(Map.Entry::getKey)
+      .toList();
+    int startIndex = remainingCandidates.isEmpty()
+      ? 0
+      : (int) Math.floorMod(rotationDate.toEpochDay(), (long) remainingCandidates.size());
+    for (int offset = 0; offset < remainingCandidates.size() && selected.size() < categories.size(); offset++) {
+      selected.add(remainingCandidates.get((startIndex + offset) % remainingCandidates.size()));
+    }
+  }
+
+  if (selected.size() < categories.size()) {
+    throw new IllegalStateException("Not enough eligible projects to fill the homepage rotation");
+  }
+  return List.copyOf(selected);
+}
+
 // Generate the segmented control buttons for sorting with proper active state
 static DomContent sortButtons(String activeSort) {
   return div(
@@ -517,13 +578,23 @@ static DomContent sortButtons(String activeSort) {
 
 static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData) {
   Set<String> uniqueTags = new TreeSet<>(collectUniqueTags(markdownData));
+  LocalDate rotationDate = LocalDate.now(ZoneOffset.UTC);
+  List<String> heroFiles = rotatingProjectFiles(
+    markdownData,
+    List.of("Desktop UI", "Web UI", "Mobile UI"),
+    rotationDate
+  );
+  List<String> featuredFiles = rotatingProjectFiles(
+    markdownData,
+    List.of("Desktop UI", "Web UI", "Mobile UI", "Terminal UI", "Game Development"),
+    rotationDate
+  );
   String[][] categories = {
     {"Desktop UI", "bi-display", "category-orange"},
     {"Web UI", "bi-globe2", "category-blue"},
     {"Mobile UI", "bi-phone", "category-pink"},
     {"Terminal UI", "bi-terminal", "category-yellow"}
   };
-  List<String> featuredFiles = List.of("javafx.html", "vaadin.html", "codename-one.html", "lanterna.html", "fxgl.html");
 
   return j2html.TagCreator.main(
     section(
@@ -589,9 +660,9 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
         span().withClass("hero-shape hero-shape-orange").attr("aria-hidden", "true"),
         span().withClass("hero-shape hero-shape-blue").attr("aria-hidden", "true"),
         span().withClass("hero-shape hero-shape-yellow").attr("aria-hidden", "true"),
-        heroPreview("vaadin.html", markdownData, "preview-vaadin"),
-        heroPreview("codename-one.html", markdownData, "preview-mobile"),
-        heroPreview("javafx.html", markdownData, "preview-javafx"),
+        heroPreview(heroFiles.get(1), markdownData, "preview-vaadin"),
+        heroPreview(heroFiles.get(2), markdownData, "preview-mobile"),
+        heroPreview(heroFiles.get(0), markdownData, "preview-javafx"),
         div(
           span("Real projects. Real possibilities.").withClass("hero-art-caption"),
           a("Explore the directory ↓").withHref("#category-section")

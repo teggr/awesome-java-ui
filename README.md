@@ -85,7 +85,10 @@ Default ranking may put a related project ahead of an exact project-name match.
 
 GitHub Actions runs `jbang run build.java`, then `npm ci`, `npm run search:index`,
 and `npm test`, before uploading all of `_site/`, including `pagefind/`, for
-static deployment.
+static deployment. The homepage hero and featured projects rotate by UTC date
+across eligible projects in their platform categories. A scheduled workflow
+rebuilds and deploys the site daily at 06:17 UTC; local and manual builds use
+the same date-based selection.
 Neither `_site/` nor `node_modules/` is committed.
 
 ### Scheduled release audit
