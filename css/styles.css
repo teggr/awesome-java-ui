@@ -194,6 +194,104 @@ body.htmx-settling {
   --pf-summary-font-size: 16px;
 }
 
+.catalogue-search .pf-result-card.project-card {
+  display: block;
+  padding: 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  color: var(--color-text);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--transition-normal) var(--ease-spring),
+    box-shadow var(--transition-normal) var(--ease-out),
+    border-color var(--transition-normal) var(--ease-out);
+}
+
+.catalogue-search .pf-result-card.project-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-primary);
+}
+
+.catalogue-search .pf-result-card.project-card:focus-within {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-primary);
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.catalogue-search .pf-result-card.project-card:active {
+  transform: translateY(-4px) scale(1.005);
+}
+
+.catalogue-search .pf-result-card.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  opacity: 0;
+  transition: opacity var(--transition-normal) var(--ease-out);
+}
+
+.catalogue-search .pf-result-card.project-card:hover::before {
+  opacity: 1;
+}
+
+.catalogue-search .pf-result-card.project-card:focus-within::before {
+  opacity: 1;
+}
+
+.catalogue-search .pf-result-link {
+  display: block;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.catalogue-search .pf-result-card .project-thumbnail {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 0;
+  transition: transform var(--transition-slow) var(--ease-out);
+}
+
+.catalogue-search .pf-result-card:hover .project-thumbnail {
+  transform: scale(1.05);
+}
+
+.catalogue-search .pf-result-card:focus-within .project-thumbnail {
+  transform: scale(1.05);
+}
+
+.catalogue-search .pf-result-card .project-name {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  text-align: left;
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.catalogue-search .pf-result-card:focus-within .project-name::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .catalogue-search pagefind-summary {
   display: block;
   margin: var(--spacing-xs) 0 var(--spacing-md);

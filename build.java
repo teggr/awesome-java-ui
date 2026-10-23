@@ -502,11 +502,13 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
         <pagefind-summary></pagefind-summary>
         <pagefind-results hide-sub-results>
           <script type="text/pagefind-template">
-            <li class="pf-result pf-result-card">
-              <img class="pf-result-image" src="{{ meta.thumbnail }}" alt="">
-              <div class="pf-result-content">
-                <h3 class="pf-result-title"><a class="pf-result-link" href="{{ url | safeUrl }}">{{ meta.title }}</a></h3>
-              </div>
+            <li class="pf-result pf-result-card project-card">
+              <a class="pf-result-link" href="{{ url | safeUrl }}">
+                <div class="project-card-content">
+                  <img class="pf-result-image project-thumbnail" src="{{ meta.thumbnail }}" alt="">
+                  <div class="project-name">{{ meta.title }}</div>
+                </div>
+              </a>
             </li>
           </script>
         </pagefind-results>
