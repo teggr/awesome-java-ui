@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+  # Rotate homepage selections daily and publish the updated static site.
+  schedule:
+    - cron: '17 6 * * *'
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
