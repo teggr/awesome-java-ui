@@ -23,6 +23,7 @@ test("project content is indexed, while catalogue, fragments and tags are not", 
     assert.equal(html.includes("data-pagefind-body"), projects.includes(file), file);
     if (projects.includes(file)) {
       assert.match(html, /<h1 data-pagefind-meta="title">/, file);
+      assert.match(html, /<img src="[^"]+" alt="[^"]+" data-pagefind-meta="thumbnail:[^"]+">/, file);
       assert.match(html, /data-pagefind-ignore/, file);
       assert.match(html, /Status:/, file);
       assert.match(html, /Java Version:/, file);
@@ -35,6 +36,11 @@ test("search components and browser assets are deployed with the catalogue", asy
   for (const component of ["input", "summary", "results"]) {
     assert.match(html, new RegExp(`<pagefind-${component}[\\s>]`));
   }
+  assert.match(html, /class="pf-result-image" src="\{\{ meta\.thumbnail \}\}"/);
+  assert.doesNotMatch(html, /class="pf-result-excerpt"/);
+  assert.match(html, /data-search-clear/);
+  assert.match(html, /data-search-focus/);
+  assert.match(html, /pf-input-clear"\)\?\.click\(\)/);
   for (const asset of ["pagefind-component-ui.js", "pagefind-component-ui.css", "pagefind.js"]) {
     assert.ok((await stat(new URL(`pagefind/${asset}`, site))).size > 0);
   }

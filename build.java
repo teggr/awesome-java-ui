@@ -190,7 +190,8 @@ private DomContent project(Map<String, List<String>> data, DomContent content) {
     ).attr("data-pagefind-ignore", ""),
     each(
       h1(name).attr("data-pagefind-meta", "title"),
-      img().withSrc(image).withAlt(name),
+      img().withSrc(image).withAlt(name)
+        .attr("data-pagefind-meta", "thumbnail:" + getThumbnailUrl(image)),
       p("Status: " + status),
       p("Java Version: " + javaVersion),
       p("Learning Curve: " + learningCurve),
@@ -501,12 +502,34 @@ static DomContent indexPage(Map<String, Map<String, List<String>>> markdownData)
         <pagefind-summary></pagefind-summary>
         <pagefind-results hide-sub-results>
           <script type="text/pagefind-template">
-            <li class="pf-result">
-              <h3 class="pf-result-title"><a class="pf-result-link" href="{{ url | safeUrl }}">{{ meta.title }}</a></h3>
-              <p class="pf-result-excerpt">{{+ excerpt +}}</p>
+            <li class="pf-result pf-result-card">
+              <img class="pf-result-image" src="{{ meta.thumbnail }}" alt="">
+              <div class="pf-result-content">
+                <h3 class="pf-result-title"><a class="pf-result-link" href="{{ url | safeUrl }}">{{ meta.title }}</a></h3>
+              </div>
             </li>
           </script>
         </pagefind-results>
+        <div class="search-result-actions">
+          <button class="search-result-action" type="button" data-search-clear>
+            <i class="bi bi-x-circle"></i> Clear search
+          </button>
+          <button class="search-result-action" type="button" data-search-focus>
+            <i class="bi bi-arrow-up"></i> Back to search
+          </button>
+        </div>
+        <script>
+          document.addEventListener("click", (event) => {
+            if (!(event.target instanceof Element)) return;
+            if (event.target.closest("[data-search-clear]")) {
+              document.querySelector(".catalogue-search .pf-input-clear")?.click();
+            } else if (event.target.closest("[data-search-focus]")) {
+              const input = document.querySelector(".catalogue-search .pf-input");
+              input?.scrollIntoView({ behavior: "smooth", block: "center" });
+              input?.focus({ preventScroll: true });
+            }
+          });
+        </script>
         """),
       noscript("Search requires JavaScript. You can still browse all projects and tags below.")
     ).withClass("catalogue-search").attr("aria-labelledby", "search-heading"),
