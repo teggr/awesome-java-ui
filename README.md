@@ -95,6 +95,8 @@ Neither `_site/` nor `node_modules/` is committed.
 
 The `audit-project-releases` GitHub Agentic Workflow runs weekly on Mondays and can also be started manually from the Actions tab. It compares each project's `lastRelease` value with the verified upstream source in `lastReleaseHref` (GitHub Releases/Tags or Maven Central), then opens a pull request only when it confirms a newer stable version. Entries without a supported source link are skipped. To compile or validate the workflow locally, install the [GitHub Agentic Workflows CLI](https://github.github.com/gh-aw/) and run `gh aw compile`.
 
+Copilot inference uses the built-in GitHub Actions token with `copilot-requests: write`, as in candidate discovery; no `COPILOT_GITHUB_TOKEN` repository secret is required.
+
 **About Thumbnails:**
 The site uses automatically generated thumbnails for faster page loading. When you add a new image to the `images/` directory:
 1. Run `jbang GenerateThumbnails.java` to generate thumbnails
