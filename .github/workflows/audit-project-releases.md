@@ -12,6 +12,8 @@ tools:
     toolsets:
       - repos
   bash:
+    - "cd"
+    - "command -v jbang"
     - "jbang .github/scripts/audit-releases.java"
     - "git status --short"
     - "git diff --check"
