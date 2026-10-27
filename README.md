@@ -95,6 +95,10 @@ Neither `_site/` nor `node_modules/` is committed.
 
 The `audit-project-releases` GitHub Agentic Workflow runs weekly on Mondays and can also be started manually from the Actions tab. It compares each project's `lastRelease` value with the verified upstream source in `lastReleaseHref` (GitHub Releases/Tags or Maven Central), then opens a pull request only when it confirms a newer stable version. Entries without a supported source link are skipped. To compile or validate the workflow locally, install the [GitHub Agentic Workflows CLI](https://github.github.com/gh-aw/) and run `gh aw compile`.
 
+The checker and site build run in ordinary runner steps before the agent starts, following the working `ci-ready-maven` release-audit pattern. The agent only reads the audit report, reviews the diff, and requests a safe-output pull request. Java/JBang never run inside the agent sandbox, avoiding its separate tool-discovery, command-approval, network and TLS boundaries. Unexpected checker or build failures stop the job before the agent starts; certificate and hostname verification remain enabled.
+
+Commit normal `gh aw compile` output for scheduled workflows. `gh aw compile --dry-run` produces diagnostic locks that stage safe outputs rather than creating pull requests or issues; do not replace the production locks with those diagnostic files.
+
 Copilot inference uses the built-in GitHub Actions token with `copilot-requests: write`, as in candidate discovery; no `COPILOT_GITHUB_TOKEN` repository secret is required.
 
 Bash permissions match Copilot command identifiers (`jbang`, `command`, `git status`, `git diff`), not full invocations with arguments. The audit prompt separately limits the permitted invocations and requires standalone commands without pipes, redirections or chaining. When adding a command, check its identifier as well as the generated permission flags; listing a full command such as `jbang run build.java` does not authorize the `jbang` identifier in unattended runs.
