@@ -97,6 +97,8 @@ The `audit-project-releases` GitHub Agentic Workflow runs weekly on Mondays and 
 
 Copilot inference uses the built-in GitHub Actions token with `copilot-requests: write`, as in candidate discovery; no `COPILOT_GITHUB_TOKEN` repository secret is required.
 
+Bash permissions match Copilot command identifiers (`jbang`, `command`, `git status`, `git diff`), not full invocations with arguments. The audit prompt separately limits the permitted invocations and requires standalone commands without pipes, redirections or chaining. When adding a command, check its identifier as well as the generated permission flags; listing a full command such as `jbang run build.java` does not authorize the `jbang` identifier in unattended runs.
+
 **About Thumbnails:**
 The site uses automatically generated thumbnails for faster page loading. When you add a new image to the `images/` directory:
 1. Run `jbang GenerateThumbnails.java` to generate thumbnails

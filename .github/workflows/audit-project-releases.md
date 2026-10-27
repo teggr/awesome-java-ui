@@ -13,12 +13,10 @@ tools:
       - repos
   bash:
     - "cd"
-    - "command -v jbang"
-    - "jbang .github/scripts/audit-releases.java"
-    - "git status --short"
-    - "git diff --check"
+    - "command"
+    - "jbang"
+    - "git status"
     - "git diff"
-    - "jbang run build.java"
 network:
   allowed:
     - defaults
@@ -44,7 +42,7 @@ steps:
 
 Audit the release metadata in every root-level project Markdown file, excluding README.md.
 
-Run each shell command exactly as listed in the Bash allowlist, in a separate tool call. Use the repository working directory. Do not add pipes (including `tail`), redirections, or command chaining (`&&`, `;`): unlisted commands require interactive approval, which is unavailable in this workflow. Check each command's exit status before continuing; preserve the full audit output so source failures are not hidden.
+The Bash allowlist contains Copilot command identifiers, not full invocations: `jbang` covers both the audit and build, `command` covers the JBang availability check, and `git status` / `git diff` cover their flags. Run only the following invocations, each in a separate tool call: `cd` (repository navigation only), `command -v jbang`, `jbang .github/scripts/audit-releases.java`, `git status --short`, `git diff`, `jbang run build.java`, and `git diff --check`. Use the repository working directory. Do not add pipes (including `tail`), redirections, or command chaining (`&&`, `;`): unlisted commands require interactive approval, which is unavailable in this workflow. Check each command's exit status before continuing; preserve the full audit output so source failures are not hidden.
 
 1. Run `jbang .github/scripts/audit-releases.java`. This deterministic check reads each entry's `lastRelease` and `lastReleaseHref`, queries the declared GitHub Releases/Tags or Maven Central source, and updates only versions proven to be behind the latest stable upstream version. Entries without a supported, verified source URL are intentionally skipped. If a source cannot be reached or parsed, stop and report the error; do not infer a version or edit that entry.
 2. Inspect `git status --short` and `git diff`. Confirm that any changes are limited to `lastRelease` values in project Markdown entries and that each change is supported by that entry's `lastReleaseHref`. Do not change release-source URLs, descriptions, website links, or other metadata in this workflow.
