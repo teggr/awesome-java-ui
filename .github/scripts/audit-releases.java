@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.net.URLDecoder;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,6 +20,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 class AuditReleases {
   private static final Pattern FRONT_MATTER =
@@ -43,7 +49,45 @@ class AuditReleases {
   private static final HttpClient HTTP = HttpClient.newBuilder()
     .connectTimeout(Duration.ofSeconds(20))
     .followRedirects(HttpClient.Redirect.NORMAL)
+    .sslContext(sslContext())
     .build();
+
+  private static SSLContext sslContext() {
+    try {
+      String certificateFile = System.getenv("SSL_CERT_FILE");
+      if (certificateFile == null || certificateFile.isBlank()) {
+        return SSLContext.getDefault();
+      }
+
+      TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+      factory.init((KeyStore) null);
+      KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+      trustStore.load(null, null);
+      int index = 0;
+      for (var manager : factory.getTrustManagers()) {
+        if (manager instanceof X509TrustManager x509) {
+          for (var certificate : x509.getAcceptedIssuers()) {
+            trustStore.setCertificateEntry("default-" + index++, certificate);
+          }
+        }
+      }
+      try (var input = Files.newInputStream(Path.of(certificateFile))) {
+        var certificates = CertificateFactory.getInstance("X.509").generateCertificates(input);
+        if (certificates.isEmpty()) {
+          throw new IOException("SSL_CERT_FILE contains no certificates");
+        }
+        for (var certificate : certificates) {
+          trustStore.setCertificateEntry("environment-" + index++, certificate);
+        }
+      }
+      factory.init(trustStore);
+      SSLContext context = SSLContext.getInstance("TLS");
+      context.init(null, factory.getTrustManagers(), null);
+      return context;
+    } catch (GeneralSecurityException | IOException e) {
+      throw new IllegalStateException("Could not configure release-audit TLS trust", e);
+    }
+  }
 
   public static void main(String... args) throws Exception {
     String token = System.getenv("GITHUB_TOKEN");
