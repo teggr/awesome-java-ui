@@ -3,7 +3,7 @@ name: Vaadin
 status: Production-ready, Enterprise-focused  
 javaVersion: 17+ (21+ recommended)  
 learningCurve: Easy  
-lastRelease: Vaadin 25.3.4 (October 2026)
+lastRelease: 25.3.5
 lastReleaseHref: https://github.com/vaadin/flow/releases
 learnMoreText: Vaadin Official Website
 learnMoreHref: https://vaadin.com/
