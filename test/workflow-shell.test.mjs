@@ -4,6 +4,29 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 
+test("release audit exposes the JBang launcher and JAR through the sandbox tool cache", async () => {
+  const source = await readFile(new URL(".github/workflows/audit-project-releases.md", root), "utf8");
+  const lock = await readFile(new URL(".github/workflows/audit-project-releases.lock.yml", root), "utf8");
+  const setup = source.match(/^  - name: Expose JBang to the agent sandbox\n    run: \|\n((?:      .+\n)+)/m)?.[1];
+  assert.ok(setup, "missing sandbox-visible JBang setup");
+  for (const command of [
+    'mkdir -p "$RUNNER_TOOL_CACHE/jbang/bin"',
+    'cp -L "$HOME/.jbang/bin/jbang" "$HOME/.jbang/bin/jbang.jar" "$RUNNER_TOOL_CACHE/jbang/bin/"',
+    '"$RUNNER_TOOL_CACHE/jbang/bin/jbang" version',
+  ]) {
+    assert.ok(setup.includes(command), `source does not stage and verify JBang: ${command}`);
+    assert.ok(lock.includes(command), `compiled workflow does not stage and verify JBang: ${command}`);
+  }
+  assert.ok(source.indexOf("name: Set up JBang") < source.indexOf("name: Expose JBang"));
+  const agent = lock.split("\n  agent:\n")[1]?.split(/\n  \w/)[0];
+  assert.ok(agent, "missing agent job");
+  assert.ok(agent.indexOf("name: Set up JBang") < agent.indexOf("name: Expose JBang"));
+  assert.ok(agent.indexOf("name: Expose JBang") < agent.indexOf("awf --config"));
+  assert.ok(agent.includes('GH_AW_TOOL_CACHE="$RUNNER_TOOL_CACHE"'));
+  assert.ok(agent.includes('find "$GH_AW_TOOL_CACHE" -maxdepth 5 -type d -name bin'));
+  assert.ok(agent.includes('export PATH="$PATH${GH_AW_TOOL_BINS:+:}$GH_AW_TOOL_BINS"'));
+});
+
 test("release audit instructs the agent to use standalone allowlisted shell commands", async () => {
   const source = await readFile(new URL(".github/workflows/audit-project-releases.md", root), "utf8");
   const prompt = source.split(/^---\r?$/m)[2];
