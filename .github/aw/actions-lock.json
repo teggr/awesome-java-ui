@@ -1,10 +1,5 @@
 {
   "entries": {
-    "actions/setup-java@v4": {
-      "repo": "actions/setup-java",
-      "version": "v4",
-      "sha": "cf277c60eb25467037889841efdb72551f06f6c3"
-    },
     "actions/setup-java@v6.1.0": {
       "repo": "actions/setup-java",
       "version": "v6.1.0",
