@@ -38,6 +38,11 @@ steps:
     uses: jbangdev/setup-jbang@v0.1.1
     with:
       version: "0.142.0"
+  - name: Expose JBang to the agent sandbox
+    run: |
+      mkdir -p "$RUNNER_TOOL_CACHE/jbang/bin"
+      cp -L "$HOME/.jbang/bin/jbang" "$HOME/.jbang/bin/jbang.jar" "$RUNNER_TOOL_CACHE/jbang/bin/"
+      "$RUNNER_TOOL_CACHE/jbang/bin/jbang" version
 ---
 
 Audit the release metadata in every root-level project Markdown file, excluding README.md.
