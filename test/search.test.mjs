@@ -58,6 +58,16 @@ test("project pages preserve official destinations, metadata and shared navigati
   assert.match(html, /id="code-example"/);
 });
 
+test("Vitra is included with its local screenshot and thumbnail", async () => {
+  const markdown = await readFile(new URL("vitra.md", root), "utf8");
+  const html = await read("vitra.html");
+  assert.match(markdown, /^learnMoreHref: https:\/\/skinning-javafx-applications\.netlify\.app\/#vitra$/m);
+  assert.match(markdown, /^image: images\/ui-vitra\.png$/m);
+  assert.match(html, /data-pagefind-meta="thumbnail:images\/thumbnail-vitra\.png"/);
+  assert.ok((await stat(new URL("images/ui-vitra.png", root))).size > 0);
+  assert.ok((await stat(new URL("images/thumbnail-vitra.png", root))).size > 0);
+});
+
 test("tag pages use the shared directory layout and show accurate result counts", async () => {
   const html = await read("tag-terminal-ui.html");
   assert.match(html, /<main id="main-content" class="tag-page">/);
