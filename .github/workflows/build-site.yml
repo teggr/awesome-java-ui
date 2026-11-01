@@ -46,6 +46,8 @@ jobs:
 
       - name: Build site with JBang
         run: jbang run build.java
+        env:
+          POSTHOG_KEY: phc_z2WcTcL5FgWEDgnSsJ3W7jKuv9XZnypq7FJKwYGRBtnv
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
