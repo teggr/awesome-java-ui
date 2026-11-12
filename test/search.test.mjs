@@ -68,6 +68,17 @@ test("Vitra is included with its local screenshot and thumbnail", async () => {
   assert.ok((await stat(new URL("images/thumbnail-vitra.png", root))).size > 0);
 });
 
+test("DomUI is included with its local screenshot and thumbnail", async () => {
+  const markdown = await readFile(new URL("domui.md", root), "utf8");
+  const html = await read("domui.html");
+  assert.match(markdown, /^learnMoreHref: https:\/\/domui\.org\/$/m);
+  assert.match(markdown, /^javaVersion: 21\+$/m);
+  assert.match(markdown, /^image: images\/ui-domui\.png$/m);
+  assert.match(html, /data-pagefind-meta="thumbnail:images\/thumbnail-domui\.png"/);
+  assert.ok((await stat(new URL("images/ui-domui.png", root))).size > 0);
+  assert.ok((await stat(new URL("images/thumbnail-domui.png", root))).size > 0);
+});
+
 test("tag pages use the shared directory layout and show accurate result counts", async () => {
   const html = await read("tag-terminal-ui.html");
   assert.match(html, /<main id="main-content" class="tag-page">/);
