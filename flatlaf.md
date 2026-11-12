@@ -3,7 +3,7 @@ name: Swing + FlatLaf
 status: Actively-maintained
 javaVersion: 8+ (11+ recommended for HiDPI)
 learningCurve: Easy
-lastRelease: FlatLaf 3.7.2 (July 2026)
+lastRelease: 3.8
 lastReleaseHref: https://github.com/JFormDesigner/FlatLaf/releases
 learnMoreText: FlatLaf Official Website
 learnMoreHref: https://www.formdev.com/flatlaf/
