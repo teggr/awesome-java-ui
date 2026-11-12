@@ -3,7 +3,7 @@ name: Limn
 status: Production-ready, Active
 javaVersion: 17+
 learningCurve: Moderate
-lastRelease: v1.0.0 (October 2026)
+lastRelease: v1.1.0
 lastReleaseHref: https://github.com/limn-toolkit/limn-toolkit/releases/tag/v1.0.0
 learnMoreText: Official Website
 learnMoreHref: https://limn-toolkit.github.io/limn-toolkit/
