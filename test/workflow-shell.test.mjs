@@ -76,3 +76,12 @@ test("candidate discovery permits the identifiers for its evidence and date comm
   }
   assert.match(source, /`date -u \+%F`/);
 });
+
+test("candidate discovery limits repository pushes and artifact releases to the last year", async () => {
+  const source = await readFile(new URL(".github/workflows/discover-candidates.md", root), "utf8");
+  const script = await readFile(new URL(".github/scripts/DiscoverCandidates.java", root), "utf8");
+  assert.match(script, /\.toLocalDate\(\)\.minusYears\(1\)/);
+  assert.match(script, /pushed:>=" \+ cutoff/);
+  assert.match(source, /GitHub repositories pushed and Maven artifacts released within the last year/);
+  assert.match(source, /latest push is more than a year old/);
+});

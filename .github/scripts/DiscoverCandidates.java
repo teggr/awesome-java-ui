@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 void main() throws Exception {
   try {
     var generatedAt = Instant.now();
-    var cutoff = generatedAt.atOffset(ZoneOffset.UTC).toLocalDate().minusDays(365L * 3);
+    var cutoff = generatedAt.atOffset(ZoneOffset.UTC).toLocalDate().minusYears(1);
     var catalog = Discovery.readCatalog();
     var github = Discovery.githubCandidates(catalog, cutoff);
     var maven = Discovery.mavenCandidates(catalog, cutoff);
@@ -198,7 +198,7 @@ final class Discovery {
     lines.add("Automated discovery run on " + generatedAt.atOffset(ZoneOffset.UTC).toLocalDate()
         + " (UTC). These are unverified leads, not recommendations or accepted catalogue entries.");
     lines.add("");
-    lines.add("**Sources:** GitHub repository search and Maven Central. The collector considers projects updated or artifacts released since "
+    lines.add("**Sources:** GitHub repository search and Maven Central. The collector considers repositories pushed or artifacts released since "
         + cutoff + ", with GitHub repositories requiring at least 3 stars.");
     lines.add("");
     lines.add("Please verify that each project is a Java UI library/framework and is not already represented before adding it.");
