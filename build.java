@@ -893,8 +893,6 @@ static HtmlTag output(DomContent content, SeoMetadata seo) {
       script().withType("module").withSrc("pagefind/pagefind-component-ui.js"),
       link().withRel("stylesheet").withHref("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"),
       script().withSrc("https://unpkg.com/htmx.org@2.0.4"),
-      rawHtml("<!-- 100% privacy-first analytics -->"),
-      script().withSrc("https://scripts.simpleanalyticscdn.com/latest.js").attr("async", ""),
       posthogScript()
     ),
     body(
@@ -924,7 +922,7 @@ private static DomContent posthogScript() {
   }
   String host = System.getenv().getOrDefault("POSTHOG_HOST", "https://eu.i.posthog.com");
   return join(
-    rawHtml("<!-- PostHog analytics (running alongside Simple Analytics) -->"),
+    rawHtml("<!-- PostHog analytics -->"),
     script(rawHtml(POSTHOG_SNIPPET.formatted(key, host)))
   );
 }
