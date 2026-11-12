@@ -68,6 +68,16 @@ test("Vitra is included with its local screenshot and thumbnail", async () => {
   assert.ok((await stat(new URL("images/thumbnail-vitra.png", root))).size > 0);
 });
 
+test("ModernUI is included with its local screenshot and thumbnail", async () => {
+  const markdown = await readFile(new URL("modernui.md", root), "utf8");
+  const html = await read("modernui.html");
+  assert.match(markdown, /^lastRelease: v3\.13\.0 \(June 2026\)$/m);
+  assert.match(markdown, /^image: images\/ui-modernui\.png$/m);
+  assert.match(html, /data-pagefind-meta="thumbnail:images\/thumbnail-modernui\.png"/);
+  assert.ok((await stat(new URL("images/ui-modernui.png", root))).size > 0);
+  assert.ok((await stat(new URL("images/thumbnail-modernui.png", root))).size > 0);
+});
+
 test("tag pages use the shared directory layout and show accurate result counts", async () => {
   const html = await read("tag-terminal-ui.html");
   assert.match(html, /<main id="main-content" class="tag-page">/);
