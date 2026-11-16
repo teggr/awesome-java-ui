@@ -3,7 +3,7 @@ name: Quarkus
 status: Production-ready, Active
 javaVersion: 11+ (17+ recommended)
 learningCurve: Moderate
-lastRelease: v3.40.1.1 (October 2026)
+lastRelease: 3.40.1.2
 lastReleaseHref: https://github.com/quarkusio/quarkus/releases
 learnMoreText: Quarkus Official Website
 learnMoreHref: https://quarkus.io/
