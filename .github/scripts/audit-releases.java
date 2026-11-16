@@ -134,7 +134,11 @@ class AuditReleases {
         .filter(version -> !PRERELEASE.matcher(version).find())
         .filter(version -> versionOf(version) != null)
         .max((left, right) -> compareVersions(versionOf(left), versionOf(right)))
-        .orElseThrow(() -> new IOException("No stable version tags found at " + sourceHref));
+        .orElse(null);
+      if (latest == null) {
+        System.out.println("SKIP " + entry + ": no stable version found at " + sourceHref + " (latest: " + publishedVersions + ")");
+        continue;
+      }
 
       if (compareVersions(versionOf(latest), currentVersion) > 0) {
         String updatedMarkdown = replaceRelease(markdown, latest);
