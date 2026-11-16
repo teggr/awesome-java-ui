@@ -27,7 +27,9 @@ test("release audit runs the checker and build on the runner before starting the
   assert.ok(agent.indexOf("name: Validate project updates") < agent.indexOf("awf --config"));
   // An explicit bash shell enables Actions' -e -o pipefail defaults.
   for (const step of ["Audit project releases", "Validate project updates"]) {
-    const body = agent.split(`      - name: ${step}\n`)[1]?.split("\n      - name:")[0];
+    // The compiler may emit a step's keys in any order, so isolate the step by its name line.
+    const stepBlocks = agent.split(/\n(?=      - )/);
+    const body = stepBlocks.find(block => block.includes(`name: ${step}\n`));
     assert.ok(body, `missing ${step} runner step`);
     assert.match(body, /^        shell: bash$/m);
   }
