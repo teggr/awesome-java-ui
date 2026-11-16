@@ -38,6 +38,8 @@ steps:
       version: "0.142.0"
   - name: Audit project releases
     shell: bash
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
     run: |
       mkdir -p /tmp/gh-aw/agent
       jbang .github/scripts/audit-releases.java | tee /tmp/gh-aw/agent/release-audit.txt
