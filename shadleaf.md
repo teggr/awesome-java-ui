@@ -3,7 +3,7 @@ name: Shadleaf
 status: Active
 javaVersion: 17+ (Spring Boot 4)
 learningCurve: Easy
-lastRelease: 1.0.3
+lastRelease: 1.1.0
 lastReleaseHref: https://github.com/wimdeblauwe/shadleaf/releases
 learnMoreText: Shadleaf Website
 learnMoreHref: https://shadleaf.dev
